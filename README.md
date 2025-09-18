@@ -1,147 +1,162 @@
-# 🔐 CLI Password Manager in Python
+🔐 Vaultmate — CLI Password Manager (Python)
 
-<!-- badges: start -->
+A lightweight, encrypted command-line password manager for personal use.
+Vaultmate stores credentials in an encrypted CSV (Fernet/AES) with a random per-vault salt and strong PBKDF2-HMAC key derivation (default 1,200,000 iterations).
 
-![Pylint](https://github.com/CodeStarter25/brain_squeeze_flask/actions/workflows/pylint.yml/badge.svg)
-![CodeQL](https://github.com/CodeStarter25/brain_squeeze_flask/actions/workflows/codeql.yml/badge.svg)
-[![Codecov test coverage](https://codecov.io/gh/CodeStarter25/co2emissionsanalyzer/graph/badge.svg)](https://app.codecov.io/gh/CodeStarter25/co2emissionsanalyzer) 
-<img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" />
+✨ Highlights
 
-<!-- badges: end -->
+End-to-end encryption (Fernet/AES + PBKDF2-HMAC)
 
----
+Random 16-byte salt generated automatically for each new vault
 
-### 🎥 [Video Demo](https://youtu.be/kyA6AvcbZJE)
+Search across Name / Email / Username / Notes (case-insensitive)
 
----
+Details view from list (password masked)
 
-## 📌 Description
+Immediate save after delete (prevents accidental data loss)
 
-A command-line password manager built in Python for the **CS50P Final Project**. It uses CSV files to store credentials and protects them using **salted encryption** via the `cryptography` library.
+Master password input is hidden + trimmed (avoids trailing-space mistakes)
 
-The tool is entirely self-contained, portable, and does not rely on third-party services. Designed for personal use and full control over your password database.
+Password generator with strength rating and compromised-list check
 
----
+Local-only (no third-party services), portable, simple terminal UI
 
-## 🧭 Introduction
+Timestamps for creation and last modification
 
-This is a secure CLI tool for managing passwords. It features a simple prompt-based system where users can create/open encrypted password databases, view, add, update, or delete entries.
+Basic pytest tests for key functionality
 
-- Built using Python classes and loop-based menus
-- Includes fail-safes to prevent unexpected crashes
-- Clean, readable UI within the terminal
+Optional toggles (supported in code/config):
 
----
+Cryptographically secure password generation via secrets
 
-## 📊 How It Works
+PWM_KDF_ITERATIONS env var to tune PBKDF2 cost
 
-Users are prompted with numbered actions. Here's a high-level flow of the program:
+Paths anchored to project directory for robustness
 
-```mermaid
-flowchart TD
-    A(["Start with Welcome"]) -- 1 --> B("Create a File")
-    A -- 2 --> C("Open a File")
-    B --> D("Create Master Password")
-    D --> C
-    C -- Enter Password --> E["Main Menu"]
-    E -- 1 --> F("See All Database")
-    F --> K(["Exit From Program"])
-    E -- 2 --> G("See 1 entry in Database")
-    G --> K
-    E -- 3 --> H("Add New Entry")
-    H --> K
-    E -- 4 --> I("Update Existing Entry")
-    I --> K
-    E -- 5 --> J("Delete Existing Entry")
-    J --> K
-```
+📦 Requirements
 
-<p>&nbsp;</p>
+Python 3.10+
 
-> 🔁 The user can safely exit at any point using `Ctrl + C`, and the program will prompt to save any unsaved changes.
+cryptography
 
----
+pytest (tests)
 
-## 🔐 Data Storage & Security
+Install via requirements.txt:
 
-- Passwords are encrypted using the `cryptography` library with unique salts per file.
-- Identical passwords will have different encrypted values due to salting.
-- The program does **not** validate user-entered data — users are responsible for entering correct information.
+pip install -r requirements.txt
 
-> ⚠️ **Note:** The security and handling of data are the user’s responsibility. The author is not liable for any data loss or misuse.
+🚀 Quickstart
+# 1) create & activate a virtual environment (recommended)
+python -m venv venv
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
+# source venv/bin/activate
 
----
+# 2) install deps
+pip install -r requirements.txt
 
-## ✅ Features
+# 3) run the app
+python cli_password_manager.py
 
-- Secure encrypted CSV file handling  
-- Built-in password generator with strength rating  
-- Clean terminal UI design  
-- Simple CSV file creation for password storage  
-- Portable and easy to use  
-- Timestamped creation and modification dates for each entry  
-- Robust input validation and error handling  
-- Checks passwords against compromised password lists  
-- All related files (database and salt) are stored in a single folder named `resources` (created if missing)
 
----
+On first run you’ll see:
 
-## 🗂️ Data Stored per Entry
+[1] Open a new file — creates a new encrypted vault in ./resources/
 
-- Name  
-- Email  
-- Username  
-- Password (manually entered or generated)  
-- Notes  
-- Creation Date/Time  
-- Modification Date/Time  
+[2] Open an existing file — decrypts a vault (enter master password)
 
----
+Main Menu
 
-## 📦 Requirements.txt
+[1] See all entries → pick a number to view details (password masked)
 
-```text
-cffi==1.17.1
-cryptography==45.0.3
-iniconfig==2.1.0
-packaging==25.0
-pluggy==1.6.0
-pycparser==2.22
-```
+[2] Search → search by name/email/username/notes
 
-### Testing Dependency
+[3] Add / [4] Update / [5] Delete / [6] Exit (save & encrypt)
 
-```text
-pytest==8.3.5
-```
+🗂️ Data Model (per entry)
 
-## 🧪 Data Resources Used
+Name
 
-- Compromised password list: [NCSC Top 100k](https://www.ncsc.gov.uk/static-assets/documents/PwnedPasswordsTop100k.txt)  
-- [Stack Overflow](https://stackoverflow.com)  
-- [Mermaid.js](https://mermaid.js.org) (for flowchart rendering)
+Email
 
----
+Username
 
-## 🚧 Future Improvements
+Password (encrypted at rest)
 
-- Initially planned a GUI version using Tkinter but switched to CLI for simplicity and better focus  
-- Wanted to use SQLite for data storage but chose encrypted CSVs instead  
-- Add contextual help messages and command-line arguments  
-- Implement automatic clipboard clearing after copying passwords  
-- Clear sensitive data from memory on exit for enhanced security
+Notes
 
----
+Creation (timestamp)
 
-## 📅 Extra Information
+Modified (timestamp)
 
-- **Start Date:** 26 May 2025  
-- **Completed Date:** 07 June 2025  
-- **Version:** 1.0.0  
-- **Status:** Complete and reviewed  
+Vault artifacts live in ./resources/:
 
----
+myvault.csv (encrypted content)
 
-## 🙏 Thanks
+myvault.csv.salt (16-byte random salt)
 
-Thanks to CS50P and all the helpful communities that supported me throughout this project.
+⚠️ Never commit vault files to Git. See .gitignore below.
+
+🔐 Security Notes
+
+Uses Fernet (AES-128-CBC + HMAC) for encryption and integrity
+
+PBKDF2-HMAC (SHA-256) for key derivation (default 1,200,000 iterations)
+
+Fresh random 16-byte salt generated when creating a new vault
+
+Master password input uses getpass and is trimmed to prevent mistakes
+
+Same plaintext password → different ciphertexts across vaults due to distinct salts
+
+Config:
+
+PWM_KDF_ITERATIONS   # optional, override PBKDF2 iterations (int)
+
+
+Your security ultimately depends on your master password strength. Choose a strong one and keep it safe.
+
+🧪 Testing
+pytest -q
+
+📁 Project Structure
+.
+├─ cli_password_manager.py        # main app
+├─ requirements.txt
+├─ README.md
+├─ LICENSE
+├─ data/
+│  └─ compromised_list.txt        # used by strength check
+├─ resources/
+│  └─ .gitkeep                    # vaults are created here (not committed)
+└─ test_cli_password_manager.py   # basic tests
+
+🗺️ Roadmap
+
+Clipboard copy with auto-clear (e.g., 20s)
+
+Command-line flags for headless operations
+
+Optional SQLite backend
+
+Best-effort secure memory cleanup on exit
+
+⚖️ License
+
+MIT — see LICENSE.
+
+🙌 Acknowledgments
+
+Thanks to the Python and security communities for references used while designing and hardening this tool.
+
+.gitignore (add this to the repo root)
+venv/
+__pycache__/
+*.pyc
+.env
+resources/*.csv
+resources/*.csv.salt
+
+
+Tip: keep resources/ in the tree with a .gitkeep file so the folder exists, but vault files stay untracked.
