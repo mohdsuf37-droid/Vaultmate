@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.pyc
+.env
+resources/*.csv
+resources/*.csv.salt
